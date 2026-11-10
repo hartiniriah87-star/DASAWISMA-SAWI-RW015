@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dasa Wisma SAWI | RW 015</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{--navy:#173b6c;--blue:#2563eb;--bg:#f4f7fb;--ink:#172033;--muted:#718096;--line:#e6ebf2;--white:#fff;--shadow:0 8px 24px rgba(31,55,90,.08)}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px}
+    button,input,select,textarea{font:inherit}
+    .app{min-height:100vh;display:flex}
+    .sidebar{width:252px;background:linear-gradient(180deg,#153a6a,#102d54);color:#fff;padding:22px 15px;display:flex;flex-direction:column;flex-shrink:0}
+    .brand{display:flex;gap:11px;align-items:center;padding:4px 9px 23px;border-bottom:1px solid rgba(255,255,255,.15)}
+    .brand-mark{width:43px;height:43px;border-radius:14px;background:#fff;color:#1b4b87;display:grid;place-items:center;font-size:23px;font-weight:900;box-shadow:0 5px 15px rgba(0,0,0,.15)}
+    .brand h1{margin:0;font-size:16px;letter-spacing:.8px}.brand small{display:block;color:#c5d6ed;font-size:11px;margin-top:4px}
+    .nav-label{margin:22px 10px 8px;color:#a9c0df;font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}
+    .nav-btn{border:0;background:transparent;color:#d8e5f5;padding:12px 13px;margin:3px 0;border-radius:10px;text-align:left;display:flex;gap:12px;align-items:center;width:100%;cursor:pointer;transition:.18s}
+    .nav-btn .ico{font-size:17px;width:22px;text-align:center}.nav-btn:hover{background:rgba(255,255,255,.1);color:#fff}.nav-btn.active{background:#fff;color:#17447c;font-weight:750;box-shadow:0 6px 15px rgba(0,0,0,.12)}
+    .sidebar-bottom{margin-top:auto;padding:16px 10px 4px;color:#b8cbe3;font-size:11px;line-height:1.65;border-top:1px solid rgba(255,255,255,.15)}
+    .main{flex:1;min-width:0}
+    .topbar{background:#fff;border-bottom:1px solid var(--line);height:76px;padding:0 30px;display:flex;align-items:center;justify-content:space-between;gap:15px;position:sticky;top:0;z-index:5}
+    .topbar h2{font-size:19px;margin:0;color:#1d3557}.topbar p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .top-meta{display:flex;align-items:center;gap:10px}.rw-pill{background:#eaf2ff;color:#1d57a6;border:1px solid #d7e7ff;padding:8px 12px;border-radius:30px;font-size:11px;font-weight:800}.avatar{width:38px;height:38px;background:#dbeafe;color:#1e4f91;border-radius:50%;display:grid;place-items:center;font-weight:900}
+    .content{padding:27px 30px 45px;max-width:1600px;margin:auto}
+    .page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}.page-heading h3{font-size:20px;margin:0 0 6px;color:#182e4c}.page-heading p{margin:0;color:var(--muted);line-height:1.5}
+    .btn{border:0;border-radius:9px;padding:10px 15px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s;text-decoration:none}
+    .btn-primary{background:#1769d2;color:white;box-shadow:0 4px 10px rgba(23,105,210,.18)}.btn-primary:hover{background:#1058b6;transform:translateY(-1px)}
+    .btn-light{background:#edf3fa;color:#24466e}.btn-danger{background:#fff0f0;color:#c43d48}.btn-small{padding:7px 9px;font-size:11px;border-radius:7px}.btn:disabled{opacity:.55;cursor:wait}
+    .section-title{font-size:14px;font-weight:850;color:#263d5d;margin:25px 0 13px;display:flex;align-items:center;gap:9px}.section-title:before{content:'';width:4px;height:18px;border-radius:4px;background:#2d79d4}
+    .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+    .metric{--c:#2563eb;background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:0 3px 12px rgba(30,55,90,.035);position:relative;overflow:hidden;min-height:104px}
+    .metric:before{content:'';position:absolute;right:-24px;top:-25px;width:85px;height:85px;border-radius:50%;background:var(--c);opacity:.09}
+    .metric-head{display:flex;align-items:center;gap:8px;color:#6d7d92;font-size:11px;font-weight:700;position:relative}.metric-icon{width:28px;height:28px;border-radius:9px;background:color-mix(in srgb,var(--c) 13%,white);display:grid;place-items:center;font-size:15px}
+    .metric-value{font-size:27px;font-weight:850;line-height:1.2;margin-top:10px;color:var(--c);position:relative}.metric-note{font-size:10px;color:#94a0b0;margin-top:3px}
+    .chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.chart-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;box-shadow:0 3px 12px rgba(30,55,90,.035);min-width:0}.chart-card h4{font-size:13px;margin:0 0 4px;color:#2b405d}.chart-card p{font-size:11px;color:#8b97a7;margin:0 0 10px}.chart-wrap{height:245px;position:relative}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}.panel h4{margin:0 0 16px;color:#203957;font-size:15px}
+    .form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 16px}.field{min-width:0}.field.full{grid-column:1/-1}.field.span2{grid-column:span 2}.field label{display:block;font-size:11px;font-weight:750;color:#52647b;margin-bottom:6px}.req{color:#e05260}
+    .field input,.field select,.field textarea{width:100%;border:1px solid #dce3ec;border-radius:8px;background:#fff;color:#25364d;padding:10px 11px;outline:none;min-height:39px;transition:.15s}.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#67a0e6;box-shadow:0 0 0 3px rgba(45,121,212,.1)}.field input[readonly]{background:#f2f5f9;color:#66758a}
+    .section-break{grid-column:1/-1;border-bottom:1px solid #edf0f5;padding:5px 0 8px;margin-top:3px;font-weight:850;color:#23518a;font-size:12px;letter-spacing:.2px}
+    .check-grid{display:flex;gap:9px;flex-wrap:wrap}.check-option{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;background:#f7f9fc;border:1px solid #e6ebf2;border-radius:8px;font-size:11px;color:#40536d;font-weight:600}.check-option input{width:14px;height:14px;min-height:0;accent-color:#2671cf}
+    .form-actions{display:flex;gap:9px;justify-content:flex-end;border-top:1px solid #edf0f5;padding-top:16px;margin-top:19px}.form-note{font-size:11px;color:#8290a2;margin:12px 0 0;line-height:1.5}
+    .table-panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.table-toolbar{padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.table-toolbar strong{font-size:13px;color:#253b59}.table-toolbar input{width:240px;max-width:55%;border:1px solid #dce3ec;border-radius:8px;padding:9px 11px;outline:none}.table-scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:750px}th,td{padding:12px 14px;border-bottom:1px solid #edf0f5;text-align:left;white-space:nowrap;font-size:11px}th{background:#f8fafc;color:#60718a;font-size:10px;text-transform:uppercase;letter-spacing:.35px}td{color:#34465f}tbody tr:hover{background:#f8fbff}.actions{display:flex;gap:6px}.empty-state{text-align:center;color:#96a2b2;padding:28px!important}
+    .status-chip{display:inline-block;padding:4px 8px;border-radius:20px;font-weight:700;font-size:10px;background:#edf4ff;color:#2a63a6}
+    .color-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+    .toast{position:fixed;right:22px;bottom:22px;z-index:20;max-width:360px;padding:13px 16px;border-radius:10px;background:#163e6f;color:#fff;box-shadow:0 10px 30px rgba(15,40,70,.25);opacity:0;transform:translateY(15px);pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:#ae3441}
+    .loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:70px 20px;color:#718096}.spinner{width:19px;height:19px;border:2px solid #d9e5f3;border-top-color:#2563eb;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .mobile-menu{display:none;background:#eff5ff;color:#194c89;border:0;border-radius:8px;padding:8px 10px;font-size:18px}
+    .info-strip{border-radius:11px;background:#eef6ff;border:1px solid #d9eaff;color:#315d8d;padding:12px 14px;font-size:11px;line-height:1.55;margin-bottom:16px}
+    @media(max-width:1100px){.metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.sidebar{position:fixed;z-index:15;left:-270px;top:0;bottom:0;transition:.22s}.sidebar.open{left:0}.mobile-menu{display:inline-block}.topbar{height:68px;padding:0 15px}.topbar h2{font-size:15px}.top-meta .rw-pill{display:none}.top-meta .btn{padding:8px 9px;font-size:10px}.content{padding:19px 14px 32px}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{padding:12px;min-height:95px}.metric-value{font-size:23px}.chart-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.span2{grid-column:auto}.page-heading{align-items:flex-start}.page-heading h3{font-size:17px}.page-heading .btn{padding:9px 10px;font-size:11px}.panel{padding:15px}.table-toolbar{align-items:flex-start;flex-direction:column}.table-toolbar input{max-width:none;width:100%}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark">🌿</div><div><h1>DASA WISMA SAWI</h1><small>RW 015 · Desa Dayeuh</small></div></div>
+    <div class="nav-label">Menu Utama</div>
+    <button class="nav-btn active" data-page="dashboard" onclick="navigate('dashboard')"><span class="ico">▦</span> Dashboard</button>
+    <div class="nav-label">Pendataan</div>
+    <button class="nav-btn" data-page="warga" onclick="navigate('warga')"><span class="ico">👩</span> Warga TP PKK</button>
+    <button class="nav-btn" data-page="keluarga" onclick="navigate('keluarga')"><span class="ico">🏠</span> Data Keluarga</button>
+    <button class="nav-btn" data-page="anggota" onclick="navigate('anggota')"><span class="ico">👨‍👩‍👧‍👦</span> Anggota Keluarga</button>
+    <div class="nav-label">Data Khusus</div>
+    <button class="nav-btn" data-page="kehamilan" onclick="navigate('kehamilan')"><span class="ico">🤰</span> Kehamilan & Kelahiran</button>
+    <button class="nav-btn" data-page="kematian" onclick="navigate('kematian')"><span class="ico">📋</span> Data Kematian</button>
+    <div class="sidebar-bottom">Sistem Informasi Dasawisma<br><strong>SAWI RW 015</strong><br>Desa Dayeuh</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0">
+        <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+        <div><h2 id="topTitle">Dashboard Dasawisma</h2><p id="topSubtitle">Ringkasan data warga dan keluarga</p></div>
+      </div>
+      <div class="top-meta"><a class="btn btn-light" href="https://docs.google.com/spreadsheets/d/1SFKA4UQbTckYL_UTX_9oEqFTmwvNgpsi1I5i2Jsb0H4/edit" target="_blank" rel="noopener">📊 Buka Spreadsheet</a><span class="rw-pill">RW 015 · DESA DAYEUH</span><div class="avatar">SW</div></div>
+    </header>
+    <section class="content" id="content"><div class="loading"><span class="spinner"></span> Memuat data aplikasi...</div></section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const PAGE_INFO = {
+  dashboard: ['Dashboard Dasawisma','Ringkasan data warga dan keluarga'],
+  warga: ['Data Warga TP PKK','Input dan kelola data warga/anggota TP PKK'],
+  keluarga: ['Data Keluarga','Input identitas keluarga dan kondisi rumah'],
+  anggota: ['Data Anggota Keluarga','Pendataan setiap anggota dalam satu keluarga'],
+  kehamilan: ['Data Kehamilan & Kelahiran','Pencatatan kehamilan, persalinan, dan nifas'],
+  kematian: ['Data Kematian','Pencatatan data kematian ibu, balita, dan bayi']
+};
+let appData = {warga:[],keluarga:[],anggota:[],kehamilan:[],kematian:[],stats:null};
+let currentPage = 'dashboard';
+let editing = null;
+let chartInstances = [];
+
+const FORM_DEFS = {
+  WARGA: {
+    title:'Formulir Data Warga TP PKK',
+    description:'Isikan identitas warga yang terdata dalam kelompok Dasawisma.',
+    fields:[
+      {type:'section',label:'Identitas Wilayah'},
+      {key:'rtDusun',label:'RT / Dusun',placeholder:'Contoh: RT 01 / Dusun ...'},
+      {key:'dasawisma',label:'Nama Dasawisma',type:'text',value:'SAWI',required:true},
+      {key:'namaKRT',label:'Nama Kepala Rumah Tangga',required:true},
+      {type:'section',label:'Identitas Warga'},
+      {key:'noRegister',label:'Nomor Register'}, {key:'nik',label:'Nomor KTP / NIK'},
+      {key:'nama',label:'Nama Warga',required:true}, {key:'tempatLahir',label:'Tempat Lahir'},
+      {key:'tanggalLahir',label:'Tanggal Lahir',type:'date'},
+      {key:'jenisKelamin',label:'Jenis Kelamin',type:'select',options:['Laki-laki','Perempuan']},
+      {key:'statusPerkawinan',label:'Status Perkawinan',type:'select',options:['Belum Kawin','Kawin','Cerai Hidup','Cerai Mati']},
+      {key:'statusKeluarga',label:'Status Dalam Keluarga',type:'select',options:['Kepala Keluarga','Istri','Anak','Menantu','Cucu','Orang Tua','Famili Lain','Lainnya']},
+      {key:'agama',label:'Agama',type:'select',options:['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya']},
+      {key:'alamat',label:'Alamat',type:'textarea',full:true},
+      {key:'pendidikan',label:'Pendidikan',type:'select',options:['Tidak/Belum Sekolah','Belum Tamat SD','SD','SMP','SMA/SMK','Diploma','S1','S2','S3']},
+      {key:'pekerjaan',label:'Pekerjaan',type:'select',options:['Tidak Bekerja','Ibu Rumah Tangga','Pelajar/Mahasiswa','PNS','TNI/Polri','Karyawan Swasta','Wiraswasta','Petani','Buruh','Pedagang','Guru','Lainnya']},
+      {type:'section',label:'Keikutsertaan Program'},
+      {key:'aktifPosyandu',label:'Aktif dalam Kegiatan Posyandu',type:'select',options:['Ya','Tidak']},
+      {key:'programBKB',label:'Mengikuti Program BKB',type:'select',options:['Ya','Tidak']},
+      {key:'memilikiTabungan',label:'Memiliki Tabungan',type:'select',options:['Ya','Tidak']},
+      {key:'paud',label:'Mengikuti PAUD atau Sejenisnya',type:'select',options:['Ya','Tidak']},
+      {key:'akseptorKB',label:'Akseptor KB',type:'select',options:['Ya','Tidak']},
+      {key:'jenisKB',label:'Jenis KB',type:'select',options:['Tidak Menggunakan','Pil','Suntik','IUD','Implan','Kondom','MOW','MOP','Lainnya']},
+      {key:'kelompokBelajar',label:'Mengikuti Kelompok Belajar',type:'select',options:['Ya','Tidak']},
+      {key:'koperasi',label:'Ikut dalam Koperasi',type:'select',options:['Ya','Tidak']},
+      {key:'disabilitas',label:'Disabilitas',type:'select',options:['Ya','Tidak']},
+      {key:'asuransiKesehatan',label:'Kepesertaan Asuransi Kesehatan',type:'select',options:['Ya','Tidak']},
+      {key:'jenisAsuransi',label:'Jenis Asuransi Kesehatan',type:'select',options:['BPJS PBI','BPJS Mandiri','Asuransi Swasta','Lainnya','Tidak Ada']},
+      {key:'kks',label:'Memiliki Kartu Keluarga Harapan (KKS/PKH)',type:'select',options:['Ya','Tidak']},
+      {key:'aktifWarga',label:'Aktif dalam Kegiatan Warga',type:'select',options:['Ya','Tidak']},
+      {key:'kegiatan',label:'Jenis Kegiatan yang Diikuti',type:'checks',full:true,options:['PPP','Kerja Bakti','Rukun Kematian','Keagamaan','Jimpitan','Arisan','UP2K','Olah Raga','PSN','Pemanfaatan Tanah Pekarangan','Industri Rumah Tangga']}
+    ]
+  },
+  KELUARGA: {
+    title:'Formulir Data Keluarga',
+    description:'Satu formulir untuk satu Kartu Keluarga. Data anggota diinput melalui menu Anggota Keluarga.',
+    fields:[
+      {type:'section',label:'Identitas Keluarga'},
+      {key:'rtDusun',label:'RT / Dusun'}, {key:'dasawisma',label:'Nama Dasawisma',value:'SAWI'},
+      {key:'noKK',label:'Nomor Kartu Keluarga',required:true}, {key:'namaKRT',label:'Nama Kepala Keluarga',required:true},
+      {key:'jumlahAnggota',label:'Jumlah Anggota (opsional)',type:'number'},
+      {type:'section',label:'Kondisi Rumah dan Lingkungan'},
+      {key:'kriteriaRumah',label:'Kriteria Rumah',type:'select',options:['Sehat Layak Huni','Tidak Sehat']},
+      {key:'tempatSampah',label:'Memiliki Tempat Pembuangan Sampah',type:'select',options:['Ya','Tidak']},
+      {key:'spal',label:'Memiliki SPAL (Saluran Pembuangan Air Limbah)',type:'select',options:['Ya','Tidak']},
+      {key:'jamban',label:'Memiliki Jamban Keluarga',type:'select',options:['Ya','Tidak']},
+      {key:'stikerP4K',label:'Menempel Stiker P4K',type:'select',options:['Ya','Tidak']},
+      {key:'sumberAir',label:'Sumber Air Keluarga',type:'select',options:['PDAM','Sumur','Mata Air','Air Sungai','Air Hujan','Air Isi Ulang','Lainnya']},
+      {key:'makananPokok',label:'Makanan Pokok Sehari-hari',type:'select',options:['Beras','Non Beras']},
+      {type:'section',label:'Keikutsertaan Kegiatan Warga'},
+      {key:'kegiatan',label:'Kegiatan yang Diikuti Keluarga',type:'checks',full:true,options:['UP2K','Pemanfaatan Tanah Pekarangan','Industri Rumah Tangga','Kerja Bakti']},
+      {key:'catatan',label:'Catatan',type:'textarea',full:true}
+    ]
+  },
+  ANGGOTA: {
+    title:'Formulir Data Anggota Keluarga',
+    description:'Pilih keluarga terlebih dahulu, lalu isi identitas setiap anggota keluarga.',
+    fields:[
+      {type:'section',label:'Identitas Keluarga'},
+      {key:'idKeluarga',label:'Pilih Keluarga / Nomor KK',type:'family',required:true},
+      {key:'namaKRT',label:'Nama Kepala Keluarga',required:true},
+      {key:'noReg',label:'Nomor Register Anggota'},
+      {type:'section',label:'Identitas Anggota'},
+      {key:'namaAnggota',label:'Nama Anggota Keluarga',required:true},
+      {key:'statusPerkawinan',label:'Status Perkawinan',type:'select',options:['Belum Kawin','Kawin','Cerai Hidup','Cerai Mati']},
+      {key:'statusKeluarga',label:'Status Dalam Keluarga',type:'select',options:['Kepala Keluarga','Istri','Suami','Anak','Menantu','Cucu','Orang Tua','Famili Lain','Lainnya']},
+      {key:'agama',label:'Agama',type:'select',options:['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya']},
+      {key:'pendidikan',label:'Pendidikan',type:'select',options:['Tidak/Belum Sekolah','Belum Tamat SD','SD','SMP','SMA/SMK','Diploma','S1','S2','S3']},
+      {key:'jenisKelamin',label:'Jenis Kelamin',type:'select',options:['Laki-laki','Perempuan'],required:true},
+      {key:'tanggalLahir',label:'Tanggal Lahir',type:'date'}, {key:'tempatLahir',label:'Tempat Lahir'},
+      {key:'pekerjaan',label:'Pekerjaan',type:'select',options:['Tidak Bekerja','Ibu Rumah Tangga','Pelajar/Mahasiswa','PNS','TNI/Polri','Karyawan Swasta','Wiraswasta','Petani','Buruh','Pedagang','Guru','Lainnya']},
+      {type:'section',label:'Data Khusus untuk Rekapitulasi'},
+      {key:'ibuHamil',label:'Ibu Hamil',type:'select',options:['Tidak','Ya']},
+      {key:'ibuMenyusui',label:'Ibu Menyusui',type:'select',options:['Tidak','Ya']},
+      {key:'berkebutuhanKhusus',label:'Berkebutuhan Khusus / Disabilitas',type:'select',options:['Tidak','Ya']},
+      {key:'butaAksara',label:'Buta Aksara',type:'select',options:['Tidak','Ya']},
+      {key:'butaAngka',label:'Buta Angka',type:'select',options:['Tidak','Ya']},
+      {key:'butaBahasa',label:'Buta Bahasa Indonesia',type:'select',options:['Tidak','Ya']},
+      {key:'kegiatanPKK',label:'Kegiatan PKK yang Diikuti',type:'checks',full:true,options:['Penghayatan dan Pengamalan Pancasila','Gotong Royong','Pendidikan dan Keterampilan','Pengembangan Kehidupan Berkoperasi','Pangan','Sandang','Kesehatan','Perencanaan Sehat']},
+      {key:'keterangan',label:'Keterangan',type:'textarea',full:true}
+    ]
+  },
+  KEHAMILAN: {
+    title:'Formulir Data Kehamilan dan Kelahiran',
+    description:'Catat data ibu, status kehamilan/persalinan, dan data bayi bila sudah lahir.',
+    fields:[
+      {key:'namaSuami',label:'Nama Suami'}, {key:'namaIbu',label:'Nama Ibu',required:true},
+      {key:'status',label:'Status',type:'select',options:['Hamil','Melahirkan','Nifas']},
+      {key:'namaBayi',label:'Nama Bayi'}, {key:'jenisKelamin',label:'Jenis Kelamin Bayi',type:'select',options:['Laki-laki','Perempuan']},
+      {key:'tanggalLahir',label:'Tanggal Lahir Bayi',type:'date'}, {key:'tanggalPerkiraan',label:'Perkiraan Persalinan',type:'date'},
+      {key:'keterangan',label:'Keterangan',type:'textarea',full:true}
+    ]
+  },
+  KEMATIAN: {
+    title:'Formulir Data Kematian',
+    description:'Catat data kematian ibu, balita, atau bayi untuk dokumentasi Dasawisma.',
+    fields:[
+      {key:'nama',label:'Nama (Ibu / Balita / Bayi)',required:true},
+      {key:'status',label:'Status',type:'select',options:['Ibu','Balita','Bayi']},
+      {key:'jenisKelamin',label:'Jenis Kelamin',type:'select',options:['Laki-laki','Perempuan']},
+      {key:'tanggalMeninggal',label:'Tanggal Meninggal',type:'date'},
+      {key:'sebab',label:'Sebab Meninggal'}, {key:'keterangan',label:'Keterangan',type:'textarea',full:true}
+    ]
+  }
+};
+
+const TABLE_DEFS = {
+  WARGA:[['noRegister','No. Register'],['namaKRT','Kepala Rumah Tangga'],['nama','Nama Warga'],['nik','NIK'],['rtDusun','RT / Dusun'],['dasawisma','Dasawisma']],
+  KELUARGA:[['noKK','Nomor KK'],['namaKRT','Kepala Keluarga'],['rtDusun','RT / Dusun'],['kriteriaRumah','Kriteria Rumah'],['sumberAir','Sumber Air'],['makananPokok','Makanan Pokok']],
+  ANGGOTA:[['namaKRT','Kepala Keluarga'],['namaAnggota','Nama Anggota'],['jenisKelamin','Jenis Kelamin'],['tanggalLahir','Tanggal Lahir'],['statusKeluarga','Status Keluarga'],['pekerjaan','Pekerjaan']],
+  KEHAMILAN:[['namaIbu','Nama Ibu'],['namaSuami','Nama Suami'],['status','Status'],['namaBayi','Nama Bayi'],['tanggalLahir','Tanggal Lahir Bayi']],
+  KEMATIAN:[['nama','Nama'],['status','Status'],['jenisKelamin','Jenis Kelamin'],['tanggalMeninggal','Tanggal Meninggal'],['sebab','Sebab Meninggal']]
+};
+
+function boot() {
+  google.script.run.withSuccessHandler(function (res) {
+    appData = res || appData;
+    renderPage();
+  }).withFailureHandler(function (err) {
+    document.getElementById('content').innerHTML = '<div class="panel"><h4>Gagal memuat aplikasi</h4><p>' + esc(err.message || err) + '</p><p>Pastikan akun pemilik Apps Script memiliki akses Editor pada spreadsheet tujuan dan fungsi setupDatabase() sudah dijalankan.</p></div>';
+  }).getAppData();
+}
+
+function navigate(page) {
+  currentPage = page; editing = null;
+  document.querySelectorAll('.nav-btn').forEach(function (b) { b.classList.toggle('active', b.dataset.page === page); });
+  document.getElementById('topTitle').textContent = PAGE_INFO[page][0];
+  document.getElementById('topSubtitle').textContent = PAGE_INFO[page][1];
+  document.getElementById('sidebar').classList.remove('open');
+  renderPage();
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+
+function renderPage() {
+  if (currentPage === 'dashboard') return renderDashboard();
+  const kind = ({warga:'WARGA',keluarga:'KELUARGA',anggota:'ANGGOTA',kehamilan:'KEHAMILAN',kematian:'KEMATIAN'})[currentPage];
+  renderCrudPage(kind);
+}
+
+function renderCrudPage(kind) {
+  const def = FORM_DEFS[kind];
+  const records = appData[kind.toLowerCase()] || [];
+  const activeRecord = editing && editing.kind === kind ? editing.record : null;
+  const fieldsHtml = def.fields.map(function (f) { return renderField(f, activeRecord || {}); }).join('');
+  const table = renderTable(kind, records);
+  document.getElementById('content').innerHTML = `
+    <div class="page-heading"><div><h3>${def.title}</h3><p>${def.description}</p></div><span class="status-chip">${records.length} data tersimpan</span></div>
+    ${kind === 'ANGGOTA' && appData.keluarga.length === 0 ? '<div class="info-strip">Belum ada data keluarga. Tambahkan data pada menu <b>Data Keluarga</b> terlebih dahulu agar anggota dapat dihubungkan ke nomor KK.</div>' : ''}
+    <div class="panel"><h4>${activeRecord ? '✏️ Perbarui Data' : '＋ Tambah Data'}</h4>
+      <form id="dataForm" onsubmit="submitForm(event,'${kind}')">
+        <input type="hidden" data-key="id" value="${esc(activeRecord && activeRecord.id || '')}">
+        <div class="form-grid">${fieldsHtml}</div>
+        <div class="form-actions">${activeRecord ? '<button type="button" class="btn btn-light" onclick="cancelEdit()">Batal</button>' : ''}<button class="btn btn-primary" id="saveBtn" type="submit">💾 ${activeRecord ? 'Simpan Perubahan' : 'Simpan Data'}</button></div>
+      </form>
+      <p class="form-note">Data disimpan langsung ke Spreadsheet SAWI RW 015 yang terhubung. Pastikan Anda sudah diberi akses oleh pemilik spreadsheet.</p>
+    </div>
+    <div class="table-panel"><div class="table-toolbar"><strong>Daftar ${def.title.replace('Formulir ','').replace('Data ','')}</strong><input id="tableSearch" placeholder="Cari data..." oninput="filterTable()"></div><div class="table-scroll">${table}</div></div>`;
+  if (kind === 'ANGGOTA') {
+    const select = document.querySelector('[data-key="idKeluarga"]');
+    if (select) select.addEventListener('change', syncFamilyHead);
+  }
+}
+
+function renderField(field, record) {
+  if (field.type === 'section') return `<div class="section-break">${esc(field.label)}</div>`;
+  const value = record[field.key] !== undefined && record[field.key] !== null ? record[field.key] : (field.value || '');
+  const full = field.full ? ' full' : (field.span2 ? ' span2' : '');
+  const required = field.required ? ' required' : '';
+  const label = `${esc(field.label)}${field.required ? ' <span class="req">*</span>' : ''}`;
+  let control = '';
+  if (field.type === 'checks') {
+    const selected = Array.isArray(value) ? value : [];
+    control = `<div class="check-grid">${field.options.map(function(opt){return `<label class="check-option"><input type="checkbox" data-array="${field.key}" value="${esc(opt)}" ${selected.indexOf(opt)>=0?'checked':''}> ${esc(opt)}</label>`;}).join('')}</div>`;
+  } else if (field.type === 'select') {
+    control = `<select data-key="${field.key}"${required}><option value="">Pilih...</option>${field.options.map(function(opt){return `<option value="${esc(opt)}" ${String(value)===opt?'selected':''}>${esc(opt)}</option>`;}).join('')}</select>`;
+  } else if (field.type === 'family') {
+    const opts = appData.keluarga.map(function(k){return `<option value="${esc(k.id)}" ${String(value)===String(k.id)?'selected':''}>${esc(k.noKK || '(Tanpa No. KK)')} — ${esc(k.namaKRT || '')}</option>`;}).join('');
+    control = `<select data-key="idKeluarga"${required}><option value="">Pilih keluarga...</option>${opts}</select>`;
+  } else if (field.type === 'textarea') {
+    control = `<textarea data-key="${field.key}" placeholder="${esc(field.placeholder||'Isi '+field.label.toLowerCase())}">${esc(value)}</textarea>`;
+  } else {
+    const type = field.type || 'text';
+    control = `<input data-key="${field.key}" type="${type}" value="${esc(value)}" placeholder="${esc(field.placeholder||'Isi '+field.label.toLowerCase())}"${required} ${field.key==='namaKRT' && currentPage==='anggota' ? '' : ''}>`;
+  }
+  return `<div class="field${full}"><label>${label}</label>${control}</div>`;
+}
+
+function syncFamilyHead() {
+  const form = document.getElementById('dataForm');
+  if (!form) return;
+  const id = form.querySelector('[data-key="idKeluarga"]').value;
+  const family = appData.keluarga.find(function(k){return k.id===id;});
+  const name = form.querySelector('[data-key="namaKRT"]');
+  if (name && family) name.value = family.namaKRT || '';
+}
+
+function collectForm(form) {
+  const data = {};
+  form.querySelectorAll('[data-key]').forEach(function(el){data[el.dataset.key] = el.value;});
+  const arrays = {};
+  form.querySelectorAll('[data-array]').forEach(function(el){
+    const key = el.dataset.array;
+    if (!arrays[key]) arrays[key] = [];
+    if (el.checked) arrays[key].push(el.value);
+  });
+  Object.keys(arrays).forEach(function(k){data[k] = arrays[k];});
+  return data;
+}
+
+function submitForm(event, kind) {
+  event.preventDefault();
+  const form = event.target;
+  if (!form.reportValidity()) return;
+  const data = collectForm(form);
+  const button = document.getElementById('saveBtn');
+  button.disabled = true; button.textContent = 'Menyimpan...';
+  google.script.run.withSuccessHandler(function(res){
+    showToast(res.message || 'Data tersimpan.'); editing = null;
+    refreshData();
+  }).withFailureHandler(function(err){
+    button.disabled = false; button.textContent = '💾 Simpan Data';
+    showToast(err.message || String(err), true);
+  }).saveRecord(kind, data);
+}
+
+function editRecord(kind,id) {
+  const list = appData[kind.toLowerCase()] || [];
+  const record = list.find(function(r){return r.id===id;});
+  if (!record) return showToast('Data tidak ditemukan.', true);
+  editing = {kind:kind,record:record};
+  currentPage = kind.toLowerCase();
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.page===currentPage);});
+  document.getElementById('topTitle').textContent = PAGE_INFO[currentPage][0];
+  document.getElementById('topSubtitle').textContent = PAGE_INFO[currentPage][1];
+  renderCrudPage(kind);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelEdit(){editing=null;renderPage();}
+function removeRecord(kind,id){
+  if(!confirm('Hapus data ini? Tindakan ini tidak dapat dibatalkan.')) return;
+  google.script.run.withSuccessHandler(function(res){showToast(res.message||'Data dihapus.');refreshData();})
+    .withFailureHandler(function(err){showToast(err.message||String(err),true);}).deleteRecord(kind,id);
+}
+
+function renderTable(kind, records) {
+  const columns = TABLE_DEFS[kind];
+  if (!records.length) return '<table><thead><tr>'+columns.map(function(c){return '<th>'+c[1]+'</th>';}).join('')+'<th>Aksi</th></tr></thead><tbody><tr><td class="empty-state" colspan="'+(columns.length+1)+'">Belum ada data. Silakan isi formulir di atas.</td></tr></tbody></table>';
+  const rows = records.map(function(r,index){
+    return `<tr data-search="${esc(columns.map(function(c){return displayValue(r[c[0]]);}).join(' '))}">${columns.map(function(c){return `<td>${esc(displayValue(r[c[0]]) || '—')}</td>`;}).join('')}<td><div class="actions"><button class="btn btn-small btn-light" onclick="editRecord('${kind}','${esc(r.id)}')">✏️ Edit</button><button class="btn btn-small btn-danger" onclick="removeRecord('${kind}','${esc(r.id)}')">Hapus</button></div></td></tr>`;
+  }).join('');
+  return `<table><thead><tr>${columns.map(function(c){return `<th>${c[1]}</th>`;}).join('')}<th>Aksi</th></tr></thead><tbody id="recordsBody">${rows}</tbody></table>`;
+}
+function filterTable(){
+  const input=document.getElementById('tableSearch'); if(!input)return;
+  const q=input.value.toLowerCase();
+  document.querySelectorAll('#recordsBody tr').forEach(function(row){row.style.display=row.dataset.search.toLowerCase().indexOf(q)>=0?'':'none';});
+}
+function displayValue(value){return Array.isArray(value)?value.join(', '):(value===null||value===undefined?'':String(value));}
+
+function renderDashboard() {
+  const s = appData.stats || {};
+  const summary = s.summary || {};
+  const dem = s.demografi || {};
+  const rumah = s.rumah || {};
+  const summaryCards = [
+    ['Kepala Rumah Tangga',summary.kepalaRumahTangga,'🏡','#2563eb','Nama kepala rumah tangga unik'],
+    ['Kepala Keluarga / KK',summary.kepalaKeluarga,'👨‍👩‍👧','#8b5cf6','Nomor KK yang terdata'],
+    ['Total Anggota Keluarga',summary.totalAnggota,'👥','#0891b2','Berdasarkan data anggota'],
+    ['Warga TP PKK',summary.wargaTPPKK,'🌷','#db5b9b','Warga terdaftar']
+  ];
+  const demographicCards = [
+    ['Total Laki-laki',s.gender&&s.gender.lakiLaki,'👨','#2384d8'],
+    ['Total Perempuan',s.gender&&s.gender.perempuan,'👩','#e45b9b'],
+    ['Balita Laki-laki',dem.balitaLaki,'🧒','#f59e0b'],
+    ['Balita Perempuan',dem.balitaPerempuan,'👧','#ec4899'],
+    ['PUS',dem.pus,'💑','#8b5cf6'],['WUS',dem.wus,'🌸','#d946a6'],
+    ['Ibu Hamil',dem.ibuHamil,'🤰','#ef7c43'],['Ibu Menyusui',dem.ibuMenyusui,'🤱','#0d9488'],
+    ['Lansia',dem.lansia,'👵','#64748b'],['3 Buta',dem.tigaButa,'📖','#ca8a04'],
+    ['Berkebutuhan Khusus',dem.berkebutuhanKhusus,'♿','#7c6bd6']
+  ];
+  const housingCards = [
+    ['Rumah Sehat Layak Huni',rumah.sehat,'🏠','#16a36a'],['Rumah Tidak Sehat',rumah.tidakSehat,'⚠️','#e05252'],
+    ['Memiliki Tempat Sampah',rumah.tempatSampah,'🗑️','#64748b'],['Memiliki SPAL',rumah.spal,'🚰','#2696b8'],
+    ['Memiliki Jamban Keluarga',rumah.jamban,'🚻','#8b5cf6'],['Menempel Stiker P4K',rumah.stikerP4K,'📌','#e28a31']
+  ];
+  const water = s.water || []; const food = s.food || []; const activities = s.activities || [];
+  document.getElementById('content').innerHTML = `
+    <div class="page-heading"><div><h3>Dashboard Dasa Wisma SAWI</h3><p>Rekapitulasi data warga, keluarga, kesehatan, kondisi rumah, dan kegiatan warga RW 015 Desa Dayeuh.</p><p style="margin-top:7px"><span class="status-chip">Database: Spreadsheet SAWI RW 015</span></p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-light" href="https://docs.google.com/spreadsheets/d/1SFKA4UQbTckYL_UTX_9oEqFTmwvNgpsi1I5i2Jsb0H4/edit" target="_blank" rel="noopener">📊 Buka Spreadsheet</a><button class="btn btn-light" onclick="refreshData()">↻ Perbarui Data</button></div></div>
+    <div class="section-title">Ringkasan Pendataan</div><div class="metric-grid">${summaryCards.map(metricCard).join('')}</div>
+    <div class="section-title">Data Anggota Keluarga dan Kesehatan</div><div class="metric-grid">${demographicCards.map(metricCard).join('')}</div>
+    <div class="section-title">Kriteria Rumah dan Sanitasi</div><div class="metric-grid">${housingCards.map(metricCard).join('')}</div>
+    <div class="section-title">Sumber Air Keluarga</div><div class="metric-grid">${water.map(function(x,i){return metricCard([x.label,x.value,['💧','🚿','🌊','🏞️','🌧️','🚰','🫗'][i],['#2586d8','#0e9f9a','#3c9c72','#647db6','#6b9ac2','#8b5cf6','#d97706'][i]]);}).join('')}</div>
+    <div class="section-title">Makanan Pokok Sehari-hari</div><div class="metric-grid">${food.map(function(x,i){return metricCard([x.label,x.value,i===0?'🍚':'🌽',i===0?'#d49a25':'#68a64b']);}).join('')}</div>
+    <div class="section-title">Keikutsertaan Kegiatan Warga</div><div class="metric-grid">${activities.map(function(x,i){return metricCard([x.label,x.value,['💰','🌱','🏭','🤝'][i],['#159b82','#65a34a','#c07a38','#3b82c4'][i]]);}).join('')}</div>
+    <div class="section-title">Grafik Rekapitulasi</div>
+    <div class="chart-grid">
+      <div class="chart-card"><h4>Komposisi Anggota Keluarga</h4><p>Perbandingan jumlah laki-laki dan perempuan</p><div class="chart-wrap"><canvas id="genderChart"></canvas></div></div>
+      <div class="chart-card"><h4>Kelompok Demografi dan Kesehatan</h4><p>Jumlah kelompok berdasarkan data anggota keluarga</p><div class="chart-wrap"><canvas id="demographyChart"></canvas></div></div>
+      <div class="chart-card"><h4>Kondisi Rumah dan Sanitasi</h4><p>Jumlah keluarga pada tiap indikator rumah</p><div class="chart-wrap"><canvas id="houseChart"></canvas></div></div>
+      <div class="chart-card"><h4>Sumber Air Keluarga</h4><p>Persebaran sumber air yang digunakan</p><div class="chart-wrap"><canvas id="waterChart"></canvas></div></div>
+      <div class="chart-card"><h4>Makanan Pokok</h4><p>Perbandingan keluarga dengan makanan pokok beras dan non beras</p><div class="chart-wrap"><canvas id="foodChart"></canvas></div></div>
+      <div class="chart-card"><h4>Kegiatan Warga</h4><p>Jumlah keluarga yang mengikuti masing-masing kegiatan</p><div class="chart-wrap"><canvas id="activityChart"></canvas></div></div>
+    </div>
+    <div class="section-title">Tabel Rekapitulasi Dashboard</div>
+    <div class="table-panel"><div class="table-toolbar"><strong>Rekapitulasi Jumlah per Indikator</strong><span class="status-chip">Data otomatis</span></div><div class="table-scroll"><table style="min-width:520px"><thead><tr><th>Kelompok</th><th>Indikator</th><th>Jumlah</th></tr></thead><tbody>${dashboardRows(s)}</tbody></table></div></div>
+    <p class="form-note" style="margin-top:18px">Catatan rekap: Balita dihitung berdasarkan usia di bawah 5 tahun; WUS usia 15–49 tahun; PUS adalah perempuan usia 15–49 tahun dengan status kawin/menikah; lansia usia 60 tahun ke atas. Angka 3 Buta dihitung sebagai anggota yang memiliki minimal satu penanda buta aksara, buta angka, atau buta bahasa Indonesia.</p>`;
+  drawCharts(s);
+}
+
+function metricCard(item){
+  return `<div class="metric" style="--c:${item[3]}"><div class="metric-head"><span class="metric-icon">${item[2]}</span><span>${esc(item[0])}</span></div><div class="metric-value">${Number(item[1]||0).toLocaleString('id-ID')}</div>${item[4]?`<div class="metric-note">${esc(item[4])}</div>`:''}</div>`;
+}
+
+function dashboardRows(s){
+  const rows=[];
+  const push=(group,label,value,color)=>rows.push(`<tr><td>${esc(group)}</td><td><span class="color-dot" style="background:${color}"></span>${esc(label)}</td><td><b>${Number(value||0).toLocaleString('id-ID')}</b></td></tr>`);
+  const a=s.summary||{},g=s.gender||{},d=s.demografi||{},r=s.rumah||{};
+  push('Pendataan','Kepala Rumah Tangga',a.kepalaRumahTangga,'#2563eb');
+  push('Pendataan','Kepala Keluarga / KK',a.kepalaKeluarga,'#8b5cf6');
+  push('Pendataan','Total Anggota Keluarga',a.totalAnggota,'#0891b2');
+  push('Pendataan','Warga TP PKK',a.wargaTPPKK,'#db5b9b');
+  push('Jenis Kelamin','Laki-laki',g.lakiLaki,'#2384d8');
+  push('Jenis Kelamin','Perempuan',g.perempuan,'#e45b9b');
+  [['Balita Laki-laki',d.balitaLaki,'#f59e0b'],['Balita Perempuan',d.balitaPerempuan,'#ec4899'],['PUS',d.pus,'#8b5cf6'],['WUS',d.wus,'#d946a6'],['Ibu Hamil',d.ibuHamil,'#ef7c43'],['Ibu Menyusui',d.ibuMenyusui,'#0d9488'],['Lansia',d.lansia,'#64748b'],['3 Buta',d.tigaButa,'#ca8a04'],['Berkebutuhan Khusus',d.berkebutuhanKhusus,'#7c6bd6']].forEach(x=>push('Demografi & Kesehatan',x[0],x[1],x[2]));
+  [['Rumah Sehat Layak Huni',r.sehat,'#16a36a'],['Rumah Tidak Sehat',r.tidakSehat,'#e05252'],['Tempat Pembuangan Sampah',r.tempatSampah,'#64748b'],['Memiliki SPAL',r.spal,'#2696b8'],['Jamban Keluarga',r.jamban,'#8b5cf6'],['Stiker P4K',r.stikerP4K,'#e28a31']].forEach(x=>push('Rumah & Sanitasi',x[0],x[1],x[2]));
+  (s.water||[]).forEach((x,i)=>push('Sumber Air',x.label,x.value,['#2586d8','#0e9f9a','#3c9c72','#647db6','#6b9ac2','#8b5cf6'][i]));
+  (s.food||[]).forEach((x,i)=>push('Makanan Pokok',x.label,x.value,i===0?'#d49a25':'#68a64b'));
+  (s.activities||[]).forEach((x,i)=>push('Kegiatan Warga',x.label,x.value,['#159b82','#65a34a','#c07a38','#3b82c4'][i]));
+  return rows.join('');
+}
+
+function drawCharts(s){
+  chartInstances.forEach(function(c){try{c.destroy();}catch(e){}}); chartInstances=[];
+  if(typeof Chart==='undefined') return;
+  const dem=s.demografi||{}, gender=s.gender||{}, rumah=s.rumah||{};
+  function chart(id,type,labels,values,colors,opts){
+    const el=document.getElementById(id); if(!el)return;
+    chartInstances.push(new Chart(el,{type:type,data:{labels:labels,datasets:[{data:values,backgroundColor:colors,borderColor:'#ffffff',borderWidth:2,borderRadius:type==='bar'?5:0,hoverOffset:5}]},options:Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:type==='bar'?'bottom':'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{precision:0},grid:{color:'#edf1f6'}},x:{grid:{display:false}}}:{}},opts||{})}));
+  }
+  chart('genderChart','doughnut',['Laki-laki','Perempuan'],[gender.lakiLaki||0,gender.perempuan||0],['#2384d8','#e45b9b']);
+  chart('demographyChart','bar',['Balita L','Balita P','PUS','WUS','Ibu Hamil','Ibu Menyusui','Lansia','3 Buta','Kebutuhan Khusus'],[dem.balitaLaki||0,dem.balitaPerempuan||0,dem.pus||0,dem.wus||0,dem.ibuHamil||0,dem.ibuMenyusui||0,dem.lansia||0,dem.tigaButa||0,dem.berkebutuhanKhusus||0],['#f59e0b','#ec4899','#8b5cf6','#d946a6','#ef7c43','#0d9488','#64748b','#ca8a04','#7c6bd6']);
+  chart('houseChart','bar',['Rumah Sehat','Rumah Tidak Sehat','Tempat Sampah','SPAL','Jamban','Stiker P4K'],[rumah.sehat||0,rumah.tidakSehat||0,rumah.tempatSampah||0,rumah.spal||0,rumah.jamban||0,rumah.stikerP4K||0],['#16a36a','#e05252','#64748b','#2696b8','#8b5cf6','#e28a31']);
+  const water=s.water||[]; chart('waterChart','doughnut',water.map(x=>x.label),water.map(x=>x.value),['#2586d8','#0e9f9a','#3c9c72','#647db6','#6b9ac2','#8b5cf6','#d97706']);
+  const food=s.food||[]; chart('foodChart','doughnut',food.map(x=>x.label),food.map(x=>x.value),['#d49a25','#68a64b']);
+  const activity=s.activities||[]; chart('activityChart','bar',activity.map(x=>x.label),activity.map(x=>x.value),['#159b82','#65a34a','#c07a38','#3b82c4'],{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0},grid:{color:'#edf1f6'}},y:{grid:{display:false}}}});
+}
+
+function refreshData(){
+  const content=document.getElementById('content');
+  if(content) content.style.opacity='.6';
+  google.script.run.withSuccessHandler(function(res){appData=res||appData;renderPage();if(content)content.style.opacity='1';})
+    .withFailureHandler(function(err){if(content)content.style.opacity='1';showToast(err.message||String(err),true);}).getAppData();
+}
+function showToast(message,isError){
+  const el=document.getElementById('toast');el.textContent=message;el.classList.toggle('error',!!isError);el.classList.add('show');
+  clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(function(){el.classList.remove('show');},3200);
+}
+function esc(value){
+  return String(value===null||value===undefined?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+window.addEventListener('load',boot);
+</script>
+</body>
+</html>
